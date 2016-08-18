@@ -224,20 +224,17 @@ void RollingFileAppender::rollOver()
 {
   Q_ASSERT_X(!m_datePatternString.isEmpty(), "DailyRollingFileAppender::rollOver()", "No active date pattern");
 
-  QString rollOverSuffix = m_rollOverSuffix;
-  computeRollOverTime();
-  if (rollOverSuffix == m_rollOverSuffix)
-    return;
-
   closeFile();
 
-  QString targetFileName = fileName() + rollOverSuffix;
+  QString targetFileName = fileName() + m_rollOverSuffix;
   QFile f(targetFileName);
   if (f.exists() && !f.remove())
     return;
   f.setFileName(fileName());
   if (!f.rename(targetFileName))
     return;
+
+  computeRollOverTime();
 
   openFile();
   removeOldFiles();
